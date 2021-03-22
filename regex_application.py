@@ -61,7 +61,7 @@ class App(object):
         ("All files","*.*")]        
         fin = tk.filedialog.askopenfile(mode="r", initialdir=initial_dir, filetypes=mask)
         self.setText(fin.read())
- 
+
     def file_save(self):
         """get a filename and save the text in the editor widget"""
         # default extension is optional, here will add .txt if missing
@@ -81,11 +81,11 @@ class App(object):
                 newText.append(newLine[0])
             except:
                 # print("No match found")
-                self.logger.warning("No match found.")
+                self.logger.info("No match found.")
         
-        # Debug
-        for line in newText:
-            print(line)
+        # # Debug
+        # for line in newText:
+        #     print(line)
             
         self.setText("\n".join(newText))
         
@@ -97,23 +97,6 @@ class App(object):
     def do_exit(self):
         root.destroy()
         
-
-# logger = logging.getLogger("zoomRegEx")
-# logger.setLevel(logging.INFO)
-# fh = logging.FileHandler("./zoomRegEx.log")
-# fh.setLevel(logging.INFO)
-# ch = logging.StreamHandler()
-# ch.setLevel(logging.WARNING)
-# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt =  "%Y-%m-%d %H:%M")
-# fh.setFormatter(formatter)
-# ch.setFormatter(formatter)
-# if not logger.handlers:
-#     logger.addHandler(fh)
-#     logger.addHandler(ch)
-
-# # Indicates fresh run.
-# logger.info('~~~~~~~~~~~~\n')
- 
 root = tk.Tk()
 root.title("a very simple editor")
 app = App(root)
