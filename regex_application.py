@@ -10,7 +10,7 @@ Created on Mon Mar 22 12:23:06 2021
 import tkinter.filedialog
 import tkinter as tk
 import re
-#from tkfiledialog import *
+import logging
  
 class App(object):
     def __init__(self, master):
@@ -30,6 +30,25 @@ class App(object):
         filemenu.add_command(label="Regex", command=self.regex)
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=self.do_exit)
+        
+        self.createLogger()
+        
+    def createLogger(self):
+        self.logger = logging.getLogger("zoomRegEx")
+        self.logger.setLevel(logging.INFO)
+        fh = logging.FileHandler("./zoomRegEx.log")
+        fh.setLevel(logging.INFO)
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.WARNING)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt =  "%Y-%m-%d %H:%M")
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
+        if not self.logger.handlers:
+            self.logger.addHandler(fh)
+            self.logger.addHandler(ch)
+            
+        # Indicates fresh run.
+        self.logger.info('~~~~~~~~~~~~\n')
  
     def file_open(self):
         """open a file to read"""
@@ -42,10 +61,6 @@ class App(object):
         ("All files","*.*")]        
         fin = tk.filedialog.askopenfile(mode="r", initialdir=initial_dir, filetypes=mask)
         self.setText(fin.read())
-        # text = fin.read()
-        # if text != None:
-        #     self.text.delete(0.0, tk.END)
-        #     self.text.insert(tk.END,text)
  
     def file_save(self):
         """get a filename and save the text in the editor widget"""
@@ -65,7 +80,8 @@ class App(object):
             try:
                 newText.append(newLine[0])
             except:
-                print("No match found")
+                # print("No match found")
+                self.logger.warning("No match found.")
         
         # Debug
         for line in newText:
@@ -80,6 +96,23 @@ class App(object):
  
     def do_exit(self):
         root.destroy()
+        
+
+# logger = logging.getLogger("zoomRegEx")
+# logger.setLevel(logging.INFO)
+# fh = logging.FileHandler("./zoomRegEx.log")
+# fh.setLevel(logging.INFO)
+# ch = logging.StreamHandler()
+# ch.setLevel(logging.WARNING)
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt =  "%Y-%m-%d %H:%M")
+# fh.setFormatter(formatter)
+# ch.setFormatter(formatter)
+# if not logger.handlers:
+#     logger.addHandler(fh)
+#     logger.addHandler(ch)
+
+# # Indicates fresh run.
+# logger.info('~~~~~~~~~~~~\n')
  
 root = tk.Tk()
 root.title("a very simple editor")
