@@ -53,13 +53,14 @@ class App(object):
     def file_open(self):
         """open a file to read"""
         # optional initial directory (default is current directory)
-        initial_dir = "C:\Temp"
+        # initial_dir = "C:\Temp"
         # the filetype mask (default is all files)
         mask = \
         [("Text and Python files","*.txt *.py *.pyw"), 
         ("HTML files","*.htm"), 
         ("All files","*.*")]        
-        fin = tk.filedialog.askopenfile(mode="r", initialdir=initial_dir, filetypes=mask)
+        # fin = tk.filedialog.askopenfile(mode="r", initialdir=initial_dir, filetypes=mask)
+        fin = tk.filedialog.askopenfile(mode="r", filetypes=mask)
         self.setText(fin.read())
 
     def file_save(self):
@@ -82,10 +83,6 @@ class App(object):
             except:
                 # print("No match found")
                 self.logger.info("No match found.")
-        
-        # # Debug
-        # for line in newText:
-        #     print(line)
             
         self.setText("\n".join(newText))
         
@@ -98,6 +95,6 @@ class App(object):
         root.destroy()
         
 root = tk.Tk()
-root.title("a very simple editor")
+root.title("317 Zoom Chat Editor")
 app = App(root)
 root.mainloop()
