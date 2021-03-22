@@ -40,12 +40,12 @@ class App(object):
         [("Text and Python files","*.txt *.py *.pyw"), 
         ("HTML files","*.htm"), 
         ("All files","*.*")]        
-        #fin = tk.filedialog.askopenfile(initialdir=initial_dir, filetypes=mask, mode='r')
         fin = tk.filedialog.askopenfile(mode="r", initialdir=initial_dir, filetypes=mask)
-        text = fin.read()
-        if text != None:
-            self.text.delete(0.0, tk.END)
-            self.text.insert(tk.END,text)
+        self.setText(fin.read())
+        # text = fin.read()
+        # if text != None:
+        #     self.text.delete(0.0, tk.END)
+        #     self.text.insert(tk.END,text)
  
     def file_save(self):
         """get a filename and save the text in the editor widget"""
@@ -56,8 +56,27 @@ class App(object):
         fout.close()
         
     def regex(self):
-        pass
+        text = self.text.get("1.0", tk.END)
+        text = text.split('\n') 
+        newText = []
         
+        for line in text:
+            newLine = re.findall("^[0-9]{2}:[0-9]{2}:[0-9]{2}.*:[\s]*(.*)$", line)
+            try:
+                newText.append(newLine[0])
+            except:
+                print("No match found")
+        
+        # Debug
+        for line in newText:
+            print(line)
+            
+        self.setText("\n".join(newText))
+        
+    def setText(self, txt):
+        if txt != None:
+            self.text.delete(0.0, tk.END)
+            self.text.insert(tk.END, txt) 
  
     def do_exit(self):
         root.destroy()
