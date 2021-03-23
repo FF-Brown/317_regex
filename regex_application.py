@@ -3,6 +3,9 @@
 Created on Mon Mar 22 12:23:06 2021
 
 @author: Nathan
+
+Base GUI code was taken from user vegaseat's comment on Daniweb
+https://www.daniweb.com/programming/software-development/threads/77387/open-or-save-file-dialogues
 """
 
 
@@ -57,6 +60,8 @@ class App(object):
             filename = tk.filedialog.askopenfilename(title="Choose a Zoom chat file to open.", filetypes = [("Text Files", "*.txt"), ("All files", "*.*")])
             with open(filename, "r") as inFile:
                 try:
+                    # This is to convert to utf-8 encoding.
+                    # May be able to remove this if we add encoding="utf-8" to with open()
                     self.setText(inFile.read().encode("cp1252").decode("utf-8"))
                 except:
                     self.setText(inFile.read())
@@ -68,6 +73,7 @@ class App(object):
         
         try:
             filename = tk.filedialog.asksaveasfilename(title="Save", filetypes=[("Text Files", "*.txt"), ("All files", "*.*")])
+            # Opening in wb mode to write binary to allow encode() below.
             with open(filename, "wb") as outFile:
                 text2save = str(self.text.get(0.0, tk.END))
                 outFile.write(text2save.encode("utf-8"))
@@ -84,6 +90,8 @@ class App(object):
         None.
 
         """
+        # Reportedly, this means line 1 character 0.
+        # Can omit last character(s) using get(1.0, 'end-1c').
         text = self.text.get("1.0", tk.END)
         text = text.split('\n') 
         newText = []
