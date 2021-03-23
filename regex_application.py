@@ -34,6 +34,7 @@ class App(object):
         self.createLogger()
         
     def createLogger(self):
+        """Initializes logger object for the app."""
         self.logger = logging.getLogger("zoomRegEx")
         self.logger.setLevel(logging.INFO)
         fh = logging.FileHandler("./zoomRegEx.log")
@@ -48,30 +49,41 @@ class App(object):
             self.logger.addHandler(ch)
             
         # Indicates fresh run.
-        self.logger.info('~~~~~~~~~~~~\n')
+        self.logger.info('\n~~~~~~~~~~~~')
  
     def file_open(self):
-        """open a file to read"""
-        # optional initial directory (default is current directory)
-        # initial_dir = "C:\Temp"
-        # the filetype mask (default is all files)
-        mask = \
-        [("Text and Python files","*.txt *.py *.pyw"), 
-        ("HTML files","*.htm"), 
-        ("All files","*.*")]        
-        # fin = tk.filedialog.askopenfile(mode="r", initialdir=initial_dir, filetypes=mask)
-        fin = tk.filedialog.askopenfile(mode="r", filetypes=mask)
-        self.setText(fin.read())
+        """Open a file and read its contents into the editor."""        
+        try:
+            filename = tk.filedialog.askopenfilename(title="Choose a Zoom chat file to open.", filetypes = [("Text Files", "*.txt"), ("All files", "*.*")])
+            with open(filename, "r") as inFile:
+                try:
+                    self.setText(inFile.read().encode("cp1252").decode("utf-8"))
+                except:
+                    self.setText(inFile.read())
+        except FileNotFoundError:
+            self.logger.info("Tk exception caught: User chose not to open file.")
 
     def file_save(self):
-        """get a filename and save the text in the editor widget"""
-        # default extension is optional, here will add .txt if missing
-        fout = tk.filedialog.asksaveasfile(mode='w', defaultextension=".txt")
-        text2save = str(self.text.get(0.0,tk.END))
-        fout.write(text2save)
-        fout.close()
+        """Get a filename and save editor text to that file."""
+        
+        try:
+            filename = tk.filedialog.asksaveasfilename(title="Save", filetypes=[("Text Files", "*.txt"), ("All files", "*.*")])
+            with open(filename, "wb") as outFile:
+                text2save = str(self.text.get(0.0, tk.END))
+                outFile.write(text2save.encode("utf-8"))
+        except FileNotFoundError:
+            self.logger.info("Tk exception caught: User chose not to save file.")
         
     def regex(self):
+        """
+        Strip all text from a Zoom chat document except the messages themselves.
+        Writes the results to the editor window so they can be saved.
+
+        Returns
+        -------
+        None.
+
+        """
         text = self.text.get("1.0", tk.END)
         text = text.split('\n') 
         newText = []
@@ -81,12 +93,12 @@ class App(object):
             try:
                 newText.append(newLine[0])
             except:
-                # print("No match found")
                 self.logger.info("No match found.")
             
         self.setText("\n".join(newText))
         
     def setText(self, txt):
+        """Writes text to the editor window."""
         if txt != None:
             self.text.delete(0.0, tk.END)
             self.text.insert(tk.END, txt) 
